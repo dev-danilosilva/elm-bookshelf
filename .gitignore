@@ -1,0 +1,9 @@
+.cache
+dist
+elm-stuff
+.vscode
+.idea
+venv
+yarn.lock
+node_modules
+.DS_Store

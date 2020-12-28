@@ -1,0 +1,23 @@
+.input, .select, input::placeholder{
+    color: $primary-color;
+}
+
+.input, .select {
+    height: 3em;
+    padding: 0 1em;
+    border: solid $primary-color 3px;
+    background-color: $dark-color;
+}
+
+.select {
+    -moz-appearance:none; /* Firefox */
+    -webkit-appearance: none;
+}
+
+.select:focus, .input:focus {
+    outline: none;
+}
+
+.large {
+    width: 30%;
+}

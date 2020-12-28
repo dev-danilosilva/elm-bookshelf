@@ -1,0 +1,10 @@
+.sidenav {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    gap: 30px;
+    padding-top: 20px;
+    width: 200px;
+    border-right: solid 5px #0eb442;
+}
