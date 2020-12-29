@@ -5,7 +5,6 @@ import Browser exposing (Document)
 import Html exposing (Html, text, div, button, span, h1, input, section, option, select, select)
 import Html.Events exposing (onClick, onInput)
 
-
 main : Program () Model Msg
 main =
     Browser.document
@@ -32,7 +31,7 @@ initialSearchState = SearchState "" "" "" False
 
 
 initialPage : Page
-initialPage = Loading
+initialPage = Dashboard
 
 
 searchByOptions : List SearchByOption
@@ -64,7 +63,7 @@ pageTitle page =
 
         _           -> ""
 
-    
+
 
 type alias Model =
     { pageTitle    : String
@@ -87,6 +86,7 @@ type Page
     | AddBook
     | Dashboard
     | Settings
+    | Login
 
 
 type alias SearchState =
@@ -98,7 +98,15 @@ type alias SearchState =
 
 type alias SearchByOption =
     { label : String
-    , value : String    
+    , value : String
+    }
+
+type alias Book =
+    { title : String
+    , author: String
+    , editor: String
+    , isbn  : String
+    , publishYear : Int
     }
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -109,27 +117,27 @@ update msg model =
 
         Navigate page ->
             ({model | page = page, pageTitle = pageTitle page}, Cmd.none)
-        
+
         EnterSearchQuery q ->
             let
                 newSearchTerm : SearchState
                 newSearchTerm = SearchState q model.searchState.filter model.searchState.orderBy model.searchState.desc
             in
-                ( Debug.log "typing Q" { model | searchState = newSearchTerm }, Cmd.none)
+                ({ model | searchState = newSearchTerm }, Cmd.none)
 
         EnterFilter filter ->
             let
                 newSearchTerm : SearchState
                 newSearchTerm = SearchState model.searchState.term filter model.searchState.orderBy model.searchState.desc
             in
-                ( Debug.log "typing Q" { model | searchState = newSearchTerm }, Cmd.none)
+                ({ model | searchState = newSearchTerm }, Cmd.none)
 
         EnterOrderBy orderBy ->
             let
                 newSearchTerm : SearchState
                 newSearchTerm = SearchState model.searchState.term model.searchState.filter orderBy model.searchState.desc
             in
-                ( Debug.log "typing Q" { model | searchState = newSearchTerm }, Cmd.none)
+                ({ model | searchState = newSearchTerm }, Cmd.none)
 
 
 
@@ -161,6 +169,7 @@ viewSideNav currPage =
         , viewNavigationButton "My Books" Navigate BookListing (currPage == BookListing)
         , viewNavigationButton "Add Book" Navigate AddBook (currPage == AddBook)
         , viewNavigationButton "Settings" Navigate Settings (currPage == Settings)
+        , viewNavigationButton "Logout" Navigate Loading False
         ]
 
 
@@ -194,6 +203,8 @@ viewContent page =
         Loading     ->
             viewLoading
 
+        Login -> text "Login"
+
 
 viewBookListing : Html Msg
 viewBookListing  =
@@ -209,8 +220,11 @@ viewAddBook =
     div [class "book-search-container"]
         [ viewSearchControls
         , div [class "search-result-container"]
-            [text "External Database Results"]
+            [ div [class "results"]
+                (List.map (\book -> viewBookSearchResult book) bookSearchResults )
+            ]
         ]
+
 
 
 viewSettings : Html Msg
@@ -234,11 +248,41 @@ viewSearchControls =
         [ select [class "select", id "search-by", onInput EnterFilter]
             (List.map
                 (\item -> viewSelectOption item) searchByOptions)
-            
+
         , input [class "input large", id "q", onInput EnterSearchQuery, placeholder "Search Term", autocomplete False] []
-            
+
         , select [class "select", id "order-by", onInput EnterOrderBy]
             (List.map
                 (\item -> viewSelectOption item) orderByOptions)
         , div [class "button hoverable"] [text "Search"]
         ]
+
+
+viewBookSearchResult : Book -> Html Msg
+viewBookSearchResult book =
+    div [class "result"]
+        [ div [] [text <| "> Title  " ++ book.title]
+        , div [] [text <| "> Author " ++ book.author]
+        , div [] [text <| "> Editor " ++ book.editor]
+        , div [] [text <| "> ISBN_  " ++ book.isbn]
+        , div [] [text <| "> Published At " ++ String.fromInt book.publishYear]
+        , div [class "result-actions"] [text "Actions"]
+        ]
+
+-- Mock Data
+
+bookSearchResults : List Book
+bookSearchResults =
+    [ Book "O Vale do Amanhã" "Carlos João Lima" "A Editora" "978-85-204-2938-9" 1923
+    , Book "Carmem Miranda - Uma Biografia" "" "" "978-85-204-2938-9" 2034
+    , Book "João e o Pé de Feijão" "" "" "978-85-204-2938-9" 2034
+    , Book "Blah Bleh Blih" "GGG" "GGGGGG" "978-85-204-2938-9" 2034
+    , Book "KLB - Uma Banda Maneira" "HHHHH" "HHH" "978-85-204-2938-9" 2034
+    , Book "Harmonia" "Arnold Schoemberg" "" "978-85-204-2938-9" 2034
+    , Book "Blah" "AAA" "A Editora" "978-85-204-2938-9" 2034
+    , Book "Bleh" "BBB" "A Editora" "978-85-204-2938-9" 2034
+    , Book "Blih" "CCC" "A Editora" "978-85-204-2938-9" 2034
+    , Book "Bloh" "DDD" "A Editora" "978-85-204-2938-9" 2034
+    , Book "Blue" "EEE" "A Editora" "978-85-204-2938-9" 2034
+    , Book "Br" "FFF" "A Editora" "978-85-204-2938-9" 2034
+    ]
