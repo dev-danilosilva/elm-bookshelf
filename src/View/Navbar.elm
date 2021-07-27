@@ -7,15 +7,18 @@ module View.Navbar exposing ( Theme(..)
                             , brandHref
                             , brandLink
                             , theme
+                            , init
                             , update
                             , asView)
 
+import Html.Events exposing (onClick)
 import Html exposing (Html, a, div, h1, nav, text)
 import Html.Attributes exposing (class, href)
 
 
 type Msg =
-    SwitchTheme Theme
+      SwitchTheme Theme
+    | GoToTwitter
 
 type Theme =
       Light
@@ -82,6 +85,8 @@ update msg model =
                 newConfig = NavbarConfig {currConfig | theme = newTheme}
             in
                  ({model | config = newConfig}, Cmd.none)
+        GoToTwitter ->
+            (model, Cmd.none)
 
 asView : NavbarConfig -> Html Msg
 asView (NavbarConfig config) =
@@ -104,8 +109,10 @@ asView (NavbarConfig config) =
              , div [class "navbar-end"]
                    [ div [ class "navbar-item"]
                          [ div [class "buttons"]
-                               [ a [class "button is-link", href "https://www.twitter.com"]
-                                   [text "Twitter"]
+                               [ div [ class "button is-link"
+                                     , href "https://www.twitter.com"
+                                     , onClick GoToTwitter]
+                                     [text "Twitter"]
                                , a [class "button is-info", href "https://www.linkedin.com"]
                                    [text "LinkedIn"]
                                ]

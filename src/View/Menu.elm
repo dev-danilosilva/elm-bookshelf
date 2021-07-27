@@ -1,6 +1,7 @@
 module View.Menu exposing ( Msg
                           , Model
                           , view
+                          , update
                           , init)
 
 import Html exposing (Html, a, aside, li, p, text, ul)
@@ -20,9 +21,12 @@ type alias MenuOption=
 type alias Model =
     {config : Config}
 
-init : Model
+init : (Model, Cmd Msg)
 init =
-    {config = {options = []}}
+    ({config = {options = []}}, Cmd.none)
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update _ model = (model, Cmd.none)
 
 view : Html msg
 view =

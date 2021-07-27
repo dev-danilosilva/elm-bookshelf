@@ -1,5 +1,6 @@
 .cache
 dist
+bin/js/app.js
 elm-stuff
 .vscode
 .idea
