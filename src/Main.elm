@@ -47,7 +47,7 @@ init _ =
     in
         Tuple.pair
             { pageTitle    = "Bookz"
-            , currentPage  = Loading
+            , currentPage  = navigateTo Menu.DashboardOption
             , navbarState  = NavbarState navBarStatus
             , menuState    = MenuState menuState
             }
@@ -78,7 +78,7 @@ update msg model =
 
                 newMenuState = MenuState newSubModel
 
-                newPage = route newSubModel.currentOption
+                newPage = navigateTo newSubModel.currentOption
             in
                 Tuple.pair
                     {model | menuState = newMenuState
@@ -143,8 +143,8 @@ withMessage : (msg -> Msg) -> Html msg -> Html Msg
 withMessage fn =
     Html.map fn
 
-route : Menu.MenuOption -> Page
-route option =
+navigateTo : Menu.MenuOption -> Page
+navigateTo option =
     case option of
         Menu.DashboardOption ->
             let
