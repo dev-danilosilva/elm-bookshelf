@@ -6,32 +6,47 @@ module View.Menu exposing ( Msg
 
 import Html exposing (Html, a, aside, li, p, text, ul)
 import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
 
-type Menu = Menu Config
 
-type Msg =
-    Clicked
+type alias Msg = MenuOption
 
-type alias Config =
-    {options : List MenuOption}
-
-type alias MenuOption=
-    {label  : String}
+type MenuOption
+    = SearchOption
+    | DashboardOption
+    | ManageLibraryOption
+    | PreferencesOption
 
 type alias Model =
-    {config : Config}
+    {currentOption : MenuOption}
 
 init : (Model, Cmd Msg)
 init =
-    ({config = {options = []}}, Cmd.none)
+    ({currentOption = DashboardOption}, Cmd.none)
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update _ model = (model, Cmd.none)
+update msg model =
+    let
+        chosenOption : MenuOption
+        chosenOption = msg
+    in
+        case msg of
+            SearchOption ->
+                ({model | currentOption = chosenOption}, Cmd.none)
 
-view : Html msg
+            DashboardOption ->
+                ({model | currentOption = chosenOption}, Cmd.none)
+
+            ManageLibraryOption ->
+                ({model | currentOption = chosenOption}, Cmd.none)
+
+            PreferencesOption ->
+                ({model | currentOption = chosenOption}, Cmd.none)
+
+view : Html Msg
 view =
         aside
-            [ class "menu"
+            [ class "menu pl-3 pt-3"
             ]
             [ p
                 [ class "menu-label"
@@ -41,11 +56,11 @@ view =
                 [ class "menu-list"
                 ]
                 [ li []
-                    [ a []
+                    [ a [onClick SearchOption]
                         [ text "Search" ]
                      ]
                 , li []
-                    [ a []
+                    [ a [onClick DashboardOption]
                         [ text "Dashboard" ]
                      ]
                  ]
@@ -57,12 +72,12 @@ view =
                 [ class "menu-list"
                 ]
                 [ li []
-                    [ a []
+                    [ a [onClick ManageLibraryOption]
                         [ text "Manage Library" ]
                      ]
                 , li []
-                    [a []
-                       [text "Preferences"]
+                    [ a [onClick PreferencesOption]
+                          [text "Preferences"]
                     ]
                 ]
              ]
