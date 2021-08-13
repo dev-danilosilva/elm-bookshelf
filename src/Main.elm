@@ -6,6 +6,7 @@ import Html.Attributes exposing (class)
 import View.Navbar as Navbar exposing (asView, navbar, brandTitle, brandLink, brandHref)
 import View.Dashboard  as Dashboard
 import View.Menu as Menu
+import View.Search as Search
 
 main : Program () Model Msg
 main = Browser.document
@@ -16,6 +17,8 @@ main = Browser.document
 
 type Page =
       Dashboard Dashboard.Model
+    | Search    Search.Model
+    | NotFound  String
     | Loading
 
 type MenuState = MenuState Menu.Model -- TODO Think about the menu model
@@ -74,10 +77,12 @@ update msg model =
                 (newSubModel, subCmd) = Menu.update subMsg subModel
 
                 newMenuState = MenuState newSubModel
+
+                newPage = route newSubModel.currentOption
             in
                 Tuple.pair
                     {model | menuState = newMenuState
-                           , currentPage = route subModel.currentOption}
+                           , currentPage = newPage}
                     (Cmd.map MenuMsg subCmd)
 
 navbarView : Html Msg
@@ -115,6 +120,17 @@ viewBody currentPage =
                 [div [class "container"]
                      [h1 [class "title"] [text "Loading..."]]
                 ]
+        NotFound pageTitle ->
+            div [class "section"]
+                [div [class "container"]
+                     [h1 [class "title"] [text <| String.append pageTitle " Page Not Found"]]
+                ]
+        
+        Search _ ->
+            div [class "section"]
+                [div [class "container"]
+                     [h1 [class "title"] [text "Search"]]
+                ]
 
         Dashboard _ ->
             div [class "section"]
@@ -136,4 +152,14 @@ route option =
             in
                 Dashboard pageState
 
-        _ -> Loading
+        Menu.SearchOption ->
+            let
+                (pageState, _) = Search.init
+            in
+                Search pageState
+        
+        Menu.ManageLibraryOption ->
+            NotFound "Library Management"
+
+        Menu.PreferencesOption ->
+            NotFound "Preferences"
