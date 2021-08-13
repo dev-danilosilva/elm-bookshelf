@@ -21,7 +21,7 @@ type Page =
     | NotFound  String
     | Loading
 
-type MenuState = MenuState Menu.Model -- TODO Think about the menu model
+type MenuState = MenuState Menu.Model
 
 type NavbarState = NavbarState Navbar.Model
 
@@ -110,14 +110,6 @@ update msg model =
         _ ->
             ({model | currentPage = NotFound ""}, Cmd.none)
 
-navbarView : Html Msg
-navbarView = navbar
-                |> brandTitle "Bookz!"
-                |> brandLink  True
-                |> brandHref "/"
-                |> asView
-                |> withMessage NavbarMsg
-
 view : Model -> Browser.Document Msg
 view model =
     { title = model.pageTitle
@@ -125,6 +117,14 @@ view model =
               , viewContainer viewBody model
               ]
     }
+
+navbarView : Html Msg
+navbarView = navbar
+                |> brandTitle "Bookz!"
+                |> brandLink  True
+                |> brandHref "/"
+                |> asView
+                |> withMessage NavbarMsg
 
 viewContainer : (Page -> Html Msg) -> Model -> Html Msg
 viewContainer bodyFn model =
@@ -145,6 +145,7 @@ viewBody currentPage =
                 [div [class "container"]
                      [h1 [class "title"] [text "Loading..."]]
                 ]
+
         NotFound pageTitle ->
             div [class "section"]
                 [div [class "container"]

@@ -64,6 +64,10 @@ view =
                     [ a [onClick DashboardOption]
                         [ text "Dashboard" ]
                      ]
+                , li []
+                    [ a [onClick ManageLibraryOption]
+                        [ text "Manage Library" ]
+                    ]
                  ]
             , p
                 [ class "menu-label"
@@ -73,10 +77,6 @@ view =
                 [ class "menu-list"
                 ]
                 [ li []
-                    [ a [onClick ManageLibraryOption]
-                        [ text "Manage Library" ]
-                     ]
-                , li []
                     [ a [onClick PreferencesOption]
                           [text "Preferences"]
                     ]

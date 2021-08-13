@@ -29,7 +29,7 @@ update msg _ =
 view : Model -> Html Msg
 view model =
     div [class "section"]
-                [ div [ class "container"]
-                      [ h1 [class "title"] [text "Search"]
-                      , button [onClick "Search After Update"] [text model]]
-                ]
+        [ div [ class "container"]
+                [ h1 [class "title"] [text model]
+                , button [onClick "Search After Update"] [text "Mudar Texto"]]
+        ]
