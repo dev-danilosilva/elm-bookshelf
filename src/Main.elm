@@ -3,10 +3,10 @@ module Main exposing (..)
 import Browser
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
-import View.Navbar as Navbar exposing (asView, navbar, brandTitle, brandLink, brandHref)
-import View.Dashboard  as Dashboard
-import View.Menu as Menu
-import View.Search as Search
+import Pages.Navbar as Navbar exposing (asView, navbar, brandTitle, brandLink, brandHref)
+import Pages.Dashboard  as Dashboard
+import Pages.Menu as Menu
+import Pages.Search as Search
 
 main : Program () Model Msg
 main = Browser.document
@@ -35,18 +35,20 @@ type alias Model =
 type Msg =
       NavbarMsg Navbar.Msg
     | MenuMsg   Menu.Msg
+    | DashboardMsg Dashboard.Msg
+    | SearchMsg Search.Msg
 
 init : flags -> (Model, Cmd Msg)
 init _ =
     let
         (menuState, _) = Menu.init
         (navBarStatus, _) = Navbar.init (navbar
-                                            |> brandTitle "Bookz!"
+                                            |> brandTitle "Bookz"
                                             |> brandLink  True
                                             |> brandHref  "https://twitter.com/dev_danilosilva")
     in
         Tuple.pair
-            { pageTitle    = "Bookz"
+            { pageTitle    = "Bookz - Personal Library Management"
             , currentPage  = navigateTo Menu.DashboardOption
             , navbarState  = NavbarState navBarStatus
             , menuState    = MenuState menuState
@@ -84,11 +86,35 @@ update msg model =
                     {model | menuState = newMenuState
                            , currentPage = newPage}
                     (Cmd.map MenuMsg subCmd)
+        
+        (DashboardMsg subMsg, Dashboard subModel) ->
+            let
+                (newSubModel, subCmd) = Dashboard.update subMsg subModel
+
+                newPageState = Dashboard newSubModel
+
+            in
+                Tuple.pair
+                    {model | currentPage = newPageState}
+                    (Cmd.map DashboardMsg subCmd)
+        
+        (SearchMsg subMsg, Search subModel) ->
+            let
+                (newSubModel, subCmd) = Search.update subMsg subModel
+
+                newPageState = Search newSubModel
+            in
+                Tuple.pair
+                    {model | currentPage = newPageState}
+                    (Cmd.map SearchMsg subCmd)
+        _ ->
+            ({model | currentPage = NotFound ""}, Cmd.none)
 
 navbarView : Html Msg
 navbarView = navbar
                 |> brandTitle "Bookz!"
-                |> brandLink  False
+                |> brandLink  True
+                |> brandHref "/"
                 |> asView
                 |> withMessage NavbarMsg
 
@@ -125,18 +151,11 @@ viewBody currentPage =
                      [h1 [class "title"] [text <| String.append pageTitle " Page Not Found"]]
                 ]
         
-        Search _ ->
-            div [class "section"]
-                [div [class "container"]
-                     [h1 [class "title"] [text "Search"]]
-                ]
+        Search model ->
+            Search.view model |> withMessage SearchMsg
 
-        Dashboard _ ->
-            div [class "section"]
-                [div [class "container"]
-                        [h1 [class "title"] [text "Dashboard"]]
-                ]
-
+        Dashboard model ->
+            Dashboard.view model |> withMessage DashboardMsg
 
 withMessage : (msg -> Msg) -> Html msg -> Html Msg
 withMessage fn =
