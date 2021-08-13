@@ -89,7 +89,7 @@ navbarView : Html Msg
 navbarView = navbar
                 |> brandTitle "Bookz!"
                 |> brandLink  True
-                |> brandHref  "https://twitter.com/dev_danilosilva"
+                |> brandHref  "https://www.google.com"
                 |> asView
                 |> withMessage NavbarMsg
 

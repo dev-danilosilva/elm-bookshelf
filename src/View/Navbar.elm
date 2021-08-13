@@ -93,13 +93,18 @@ asView (NavbarConfig config) =
     let
         brand_title = config.brandTitle
         brand_href  = Maybe.withDefault "" config.brandHref
+
+        brandFn = if config.brandLink then
+                    a
+                  else
+                    div
     in
         nav
             [ class "navbar is-dark" ]
             [ div
                 [ class "navbar-brand"
                 ]
-                [ a
+                [ brandFn
                     [ class "navbar-item"
                     , href brand_href
                     ]
