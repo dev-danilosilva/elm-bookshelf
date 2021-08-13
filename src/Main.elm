@@ -88,8 +88,7 @@ update msg model =
 navbarView : Html Msg
 navbarView = navbar
                 |> brandTitle "Bookz!"
-                |> brandLink  True
-                |> brandHref  "https://www.google.com"
+                |> brandLink  False
                 |> asView
                 |> withMessage NavbarMsg
 
@@ -134,9 +133,9 @@ viewBody currentPage =
 
         Dashboard _ ->
             div [class "section"]
-                            [div [class "container"]
-                                 [h1 [class "title"] [text "Dashboard"]]
-                            ]
+                [div [class "container"]
+                        [h1 [class "title"] [text "Dashboard"]]
+                ]
 
 
 withMessage : (msg -> Msg) -> Html msg -> Html Msg
