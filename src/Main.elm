@@ -4,9 +4,11 @@ import Browser
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
 import Pages.Navbar as Navbar exposing (asView, navbar, brandTitle, brandLink, brandHref)
-import Pages.Dashboard  as Dashboard
+import Pages.Dashboard as Dashboard
 import Pages.Menu as Menu
 import Pages.Search as Search
+import Pages.NotFound as NotFound
+
 
 main : Program () Model Msg
 main = Browser.document
@@ -18,7 +20,7 @@ main = Browser.document
 type Page =
       Dashboard Dashboard.Model
     | Search    Search.Model
-    | NotFound  String
+    | NotFound  NotFound.Model
     | Loading
 
 type MenuState = MenuState Menu.Model
@@ -33,10 +35,11 @@ type alias Model =
     }
 
 type Msg =
-      NavbarMsg Navbar.Msg
-    | MenuMsg   Menu.Msg
+      NavbarMsg    Navbar.Msg
+    | MenuMsg      Menu.Msg
     | DashboardMsg Dashboard.Msg
-    | SearchMsg Search.Msg
+    | SearchMsg    Search.Msg
+    | NotFoundMsg  NotFound.Msg
 
 init : flags -> (Model, Cmd Msg)
 init _ =
@@ -87,6 +90,17 @@ update msg model =
                            , currentPage = newPage}
                     (Cmd.map MenuMsg subCmd)
         
+        (NotFoundMsg subMsg, NotFound subModel) ->
+            let
+                (newSubModel, subCmd) = NotFound.update subMsg subModel
+
+                newPageState = NotFound newSubModel
+
+            in
+                Tuple.pair
+                    {model | currentPage = newPageState}
+                    (Cmd.map NotFoundMsg subCmd)
+
         (DashboardMsg subMsg, Dashboard subModel) ->
             let
                 (newSubModel, subCmd) = Dashboard.update subMsg subModel
@@ -108,7 +122,7 @@ update msg model =
                     {model | currentPage = newPageState}
                     (Cmd.map SearchMsg subCmd)
         _ ->
-            ({model | currentPage = NotFound ""}, Cmd.none)
+            ({model | currentPage = pageNotFound }, Cmd.none)
 
 view : Model -> Browser.Document Msg
 view model =
@@ -146,11 +160,8 @@ viewBody currentPage =
                      [h1 [class "title"] [text "Loading..."]]
                 ]
 
-        NotFound pageTitle ->
-            div [class "section"]
-                [div [class "container"]
-                     [h1 [class "title"] [text <| String.append pageTitle " Page Not Found"]]
-                ]
+        NotFound model ->
+            NotFound.view model |> withMessage NotFoundMsg
         
         Search model ->
             Search.view model |> withMessage SearchMsg
@@ -178,7 +189,14 @@ navigateTo option =
                 Search pageState
         
         Menu.ManageLibraryOption ->
-            NotFound "Library Management"
+            pageNotFound
 
         Menu.PreferencesOption ->
-            NotFound "Preferences"
+            pageNotFound
+
+pageNotFound : Page
+pageNotFound =
+    let
+        (pageState, _) = NotFound.init
+    in
+        NotFound pageState
