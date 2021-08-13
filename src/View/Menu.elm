@@ -1,4 +1,5 @@
 module View.Menu exposing ( Msg
+                          , MenuOption(..)
                           , Model
                           , view
                           , update

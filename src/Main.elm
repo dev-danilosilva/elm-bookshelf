@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, a, aside, div, h1, li, p, text, ul)
+import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
 import View.Navbar as Navbar exposing (asView, navbar, brandTitle, brandLink, brandHref)
 import View.Dashboard  as Dashboard
@@ -73,10 +73,11 @@ update msg model =
 
                 (newSubModel, subCmd) = Menu.update subMsg subModel
 
-                newState = MenuState newSubModel
+                newMenuState = MenuState newSubModel
             in
                 Tuple.pair
-                    {model | menuState = newState}
+                    {model | menuState = newMenuState
+                           , currentPage = route subModel.currentOption}
                     (Cmd.map MenuMsg subCmd)
 
 navbarView : Html Msg
@@ -126,3 +127,13 @@ withMessage : (msg -> Msg) -> Html msg -> Html Msg
 withMessage fn =
     Html.map fn
 
+route : Menu.MenuOption -> Page
+route option =
+    case option of
+        Menu.DashboardOption ->
+            let
+                (pageState, _) = Dashboard.init
+            in
+                Dashboard pageState
+
+        _ -> Loading
