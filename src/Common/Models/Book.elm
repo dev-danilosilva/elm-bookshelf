@@ -1,17 +1,17 @@
 module Common.Models.Book exposing ( newBook
                                    , isbn
                                    , title
-                                   , author
                                    , authors
                                    , publisher
                                    , pubDate
                                    , quantity
-                                   , isbnAttr
-                                   , titleAttr
-                                   , authorsAttr
-                                   , publisherAttr
-                                   , pubDateAttr
-                                   , quantityAttr
+                                   , withIsbn
+                                   , withTitle
+                                   , withAuthor
+                                   , withAuthors
+                                   , withPublisher
+                                   , withPubDate
+                                   , withQuantity
                                    )
 
 type alias Book =  { isbn      : Isbn
@@ -46,87 +46,63 @@ newBook bookId bookTitle =
     , quantity  = 0
     }
 
-isbn : String -> Book -> Book
-isbn bookId book =
+withIsbn : String -> Book -> Book
+withIsbn bookId book =
     { book | isbn = bookId }
 
-title : String -> Book -> Book
-title bookTitle book =
+withTitle : String -> Book -> Book
+withTitle bookTitle book =
     { book | title = bookTitle }
 
-author : String -> Book -> Book
-author bookAuthor book =
+withAuthor : String -> Book -> Book
+withAuthor bookAuthor book =
     let
         currentAuthors = book.authors
     in
         { book | authors = bookAuthor :: currentAuthors }
 
-authors : List Author -> Book -> Book
-authors bookAuthors book =
+withAuthors : List Author -> Book -> Book
+withAuthors bookAuthors book =
     { book | authors = bookAuthors }
 
-publisher : String -> Book -> Book
-publisher pub book =
+withPublisher : String -> Book -> Book
+withPublisher pub book =
     { book | publisher = Just pub }
 
-pubDate : String -> Book -> Book
-pubDate pubd book =
+withPubDate : String -> Book -> Book
+withPubDate pubd book =
     { book | pubDate = Just pubd }
 
-quantity : Int -> Book -> Book
-quantity qtt book =
+withQuantity : Int -> Book -> Book
+withQuantity qtt book =
     { book | quantity = qtt }
 
--- 
-get : (Book -> a) -> Book -> a
-get prop book =
-    prop book
+-- Property Extractors
 
-isbnAttribute : Book -> String
-isbnAttribute book =
+isbn : Book -> String
+isbn book =
     book.isbn
 
-titleAttribute : Book -> String
-titleAttribute book =
+title : Book -> String
+title book =
     book.title
 
-authorsAttribute : Book -> List String
-authorsAttribute book =
+authors : Book -> List String
+authors book =
     book.authors
 
-publisherAttribute : Book -> String
-publisherAttribute book =
+publisher : Book -> String
+publisher book =
     case book.publisher of
        Just pb -> pb
        Nothing -> ""
 
-pubDateAttribute : Book -> String
-pubDateAttribute book =
+pubDate : Book -> String
+pubDate book =
     case book.pubDate of
        Just pd -> pd
        Nothing -> ""
 
-quantityAttribute : Book -> Int
-quantityAttribute book =
+quantity : Book -> Int
+quantity book =
     book.quantity
-
--- Get Api
-
-titleAttr : Book -> String
-titleAttr = get titleAttribute
-
-isbnAttr : Book -> String
-isbnAttr = get isbnAttribute
-
-authorsAttr : Book -> List String
-authorsAttr = get authorsAttribute
-
-publisherAttr : Book -> String
-publisherAttr = get publisherAttribute
-
-pubDateAttr : Book -> String
-pubDateAttr = get pubDateAttribute
-
-quantityAttr : Book -> Int
-quantityAttr = get quantityAttribute
-
