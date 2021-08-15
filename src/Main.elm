@@ -144,7 +144,7 @@ viewContainer : (Page -> Html Msg) -> Model -> Html Msg
 viewContainer bodyFn model =
     div [ class ""]
         [ div [class "columns"]
-              [ div [class "column is-one-fifth"]
+              [ div [class "column is-2"]
                     [Menu.view |> withMessage MenuMsg]
               , div [class "column"]
                     [bodyFn model.currentPage]
