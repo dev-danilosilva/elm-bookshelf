@@ -40,7 +40,7 @@ fakeBookSchema =
 
 fakeBook : FakeBook
 fakeBook = 
-    {token = ""
+    {token = "<INSERT YOUR TOKEN HERE>"
     ,data = fakeBookSchema}
 
 fakeBookSchemaEncoder : FakeBookSchema -> Encode.Value
