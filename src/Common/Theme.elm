@@ -1,5 +1,5 @@
 module Common.Theme exposing (Theme(..), getColors, primary, secondary, contrast)
-import Components.Navbar exposing (theme)
+
 
 type Theme = Light | Dark
 

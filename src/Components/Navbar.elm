@@ -1,31 +1,28 @@
-module Components.Navbar exposing ( Theme(..)
-                             , Model
-                             , Msg
-                             , NavbarConfig
-                             , navbar
-                             , brandTitle
-                             , brandHref
-                             , theme
-                             , init
-                             , update
-                             , asView)
+module Components.Navbar exposing   ( Model
+                                    , Msg
+                                    , NavbarConfig
+                                    , navbar
+                                    , brandTitle
+                                    , brandHref
+                                    , theme
+                                    , init
+                                    , update
+                                    , asView)
 
 import Components.Navbar.View as View
+import Common.Theme as Theme
 import Html exposing (Html)
 
 
 type Msg =
-      SwitchTheme Theme
+      SwitchTheme Theme.Theme
     | GoToTwitter
 
-type Theme =
-      Light
-    | Dark
 
 type alias Config =
     { brandTitle : String
     , brandHref  : Maybe String
-    , theme      : Theme
+    , theme      : Theme.Theme
     }
 
 type NavbarConfig = NavbarConfig Config
@@ -37,7 +34,7 @@ defaultConfig : Config
 defaultConfig =
     { brandTitle = ""
     , brandHref = Nothing
-    , theme     = Light
+    , theme     = Theme.Light
     }
 
 navbar : NavbarConfig
@@ -58,7 +55,7 @@ brandHref href (NavbarConfig config) =
     in
         NavbarConfig {config | brandHref = wrapped}
 
-theme : Theme -> NavbarConfig -> NavbarConfig
+theme : Theme.Theme -> NavbarConfig -> NavbarConfig
 theme t (NavbarConfig config) = NavbarConfig {config | theme = t}
 
 getConfig : NavbarConfig -> Config
