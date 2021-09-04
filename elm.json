@@ -25,7 +25,6 @@
             "elm/time": "1.0.0",
             "elm/url": "1.0.0",
             "elm/virtual-dom": "1.0.2",
-            "elm-explorations/test": "1.2.2",
             "justinmimbs/date": "3.2.1",
             "justinmimbs/time-extra": "1.1.0",
             "myrho/elm-round": "1.0.4",
@@ -34,7 +33,9 @@
         }
     },
     "test-dependencies": {
-        "direct": {},
+        "direct": {
+            "elm-explorations/test": "1.2.2"
+        },
         "indirect": {}
     }
 }

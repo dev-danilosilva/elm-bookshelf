@@ -15,6 +15,7 @@ import Http
 import Json.Encode as Encode
 import Json.Decode as Decode
 
+
 port sendData : String -> Cmd msg
 
 type alias FakeBookSchema  =
@@ -40,7 +41,7 @@ fakeBookSchema =
 
 fakeBook : FakeBook
 fakeBook = 
-    {token = "<INSERT YOUR TOKEN HERE>"
+    {token = "MPS-yu0ZOs5VcnOOiW-_ug"
     ,data = fakeBookSchema}
 
 fakeBookSchemaEncoder : FakeBookSchema -> Encode.Value
@@ -93,7 +94,7 @@ init =
     )
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg _ =
     case msg of
         Clicked ->
             ( Loading
@@ -106,9 +107,9 @@ update msg model =
         FetchJsonAndDecode ->
             ( Loading
             , Http.post
-                { url = "https://app.fakejson.com/q"
+                { url  = "https://app.fakejson.com/q"
                 , body = Http.jsonBody (fakeBookEncoder fakeBook)
-                , expect = Http.expectJson GotJson bookDecoder} )
+                , expect =  Http.expectJson GotJson bookDecoder})
         
         GotJson result ->
             case result of
@@ -116,7 +117,7 @@ update msg model =
                     (SuccessfullyDecoded fbSchema, sendData "Hello JS, Aqui quem fala é ela, a Elm application")
                 Err error ->
                     let
-                        err = Debug.log "Error" error
+                        _ = Debug.log "Error" error
                     in
                         (Failure, Cmd.none)
 
@@ -134,8 +135,8 @@ view model =
     div [ class "section" ]
         [ div [ class "container" ]
             [ h1 [ class "title" ] [ text "Dashboard" ]
-            , button [ onClick Clicked ] [ text "Mudar Texto" ]
-            , button [ onClick FetchJsonAndDecode ] [text "Buscar Json"]
+            , button [ onClick Clicked ] [ text "Buscar .txt" ]
+            , button [ onClick FetchJsonAndDecode ] [text "Buscar .json"]
             , div []
                 [ p []
                     [ case model of
@@ -150,7 +151,7 @@ view model =
                         
                         SuccessfullyDecoded fb ->
                             let
-                                book = Debug.log "Book" fb
+                                _ = Debug.log "Book" fb
                             in
                                 div []
                                     [ul []

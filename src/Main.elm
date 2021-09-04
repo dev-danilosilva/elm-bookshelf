@@ -3,9 +3,9 @@ module Main exposing (..)
 import Browser
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
-import Pages.Navbar as Navbar exposing (asView, navbar, brandTitle, brandLink, brandHref)
+import Components.Navbar as Navbar exposing (NavbarConfig, asView, navbar, brandTitle, brandHref)
 import Pages.Dashboard as Dashboard
-import Pages.Menu as Menu
+import Components.Menu as MenuComponent
 import Pages.Search as Search
 import Pages.NotFound as NotFound
 
@@ -23,7 +23,7 @@ type Page =
     | NotFound  NotFound.Model
     | Loading
 
-type MenuState = MenuState Menu.Model
+type MenuState = MenuState MenuComponent.Model
 
 type NavbarState = NavbarState Navbar.Model
 
@@ -36,7 +36,7 @@ type alias Model =
 
 type Msg =
       NavbarMsg    Navbar.Msg
-    | MenuMsg      Menu.Msg
+    | MenuMsg      MenuComponent.Msg
     | DashboardMsg Dashboard.Msg
     | SearchMsg    Search.Msg
     | NotFoundMsg  NotFound.Msg
@@ -44,15 +44,12 @@ type Msg =
 init : flags -> (Model, Cmd Msg)
 init _ =
     let
-        (menuState, _) = Menu.init
-        (navBarStatus, _) = Navbar.init (navbar
-                                            |> brandTitle "Bookz"
-                                            |> brandLink  True
-                                            |> brandHref  "https://twitter.com/dev_danilosilva")
+        (menuState, _) = MenuComponent.init
+        (navBarStatus, _) = Navbar.init navbarConfig
     in
         Tuple.pair
             { pageTitle    = "Bookz - Personal Library Management"
-            , currentPage  = navigateTo Menu.DashboardOption
+            , currentPage  = navigateTo MenuComponent.DashboardOption
             , navbarState  = NavbarState navBarStatus
             , menuState    = MenuState menuState
             }
@@ -76,10 +73,9 @@ update msg model =
 
         (MenuMsg subMsg, _) ->
             let
-                subModel = case model.menuState of
-                                MenuState state -> state
+                (MenuState subModel) = model.menuState
 
-                (newSubModel, subCmd) = Menu.update subMsg subModel
+                (newSubModel, subCmd) = MenuComponent.update subMsg subModel
 
                 newMenuState = MenuState newSubModel
 
@@ -132,11 +128,13 @@ view model =
               ]
     }
 
+navbarConfig : NavbarConfig
+navbarConfig = navbar
+                 |> brandTitle "Bookz!"
+                 |> brandHref  "https://twitter.com/dev_danilosilva"
+
 navbarView : Html Msg
-navbarView = navbar
-                |> brandTitle "Bookz!"
-                |> brandLink  True
-                |> brandHref "/"
+navbarView = navbarConfig
                 |> asView
                 |> withMessage NavbarMsg
 
@@ -145,8 +143,8 @@ viewContainer bodyFn model =
     div [ class ""]
         [ div [class "columns"]
               [ div [class "column is-2"]
-                    [Menu.view |> withMessage MenuMsg]
-              , div [class "column"]
+                    [MenuComponent.view |> withMessage MenuMsg]
+              , div [class "column is-10"]
                     [bodyFn model.currentPage]
               ]
         ]
@@ -173,25 +171,25 @@ withMessage : (msg -> Msg) -> Html msg -> Html Msg
 withMessage fn =
     Html.map fn
 
-navigateTo : Menu.MenuOption -> Page
+navigateTo : MenuComponent.MenuOption -> Page
 navigateTo option =
     case option of
-        Menu.DashboardOption ->
+        MenuComponent.DashboardOption ->
             let
                 (pageState, _) = Dashboard.init
             in
                 Dashboard pageState
 
-        Menu.SearchOption ->
+        MenuComponent.SearchOption ->
             let
                 (pageState, _) = Search.init
             in
                 Search pageState
         
-        Menu.ManageLibraryOption ->
+        MenuComponent.ManageLibraryOption ->
             pageNotFound
 
-        Menu.PreferencesOption ->
+        MenuComponent.PreferencesOption ->
             pageNotFound
 
 pageNotFound : Page
