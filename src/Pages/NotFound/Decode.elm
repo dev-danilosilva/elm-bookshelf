@@ -1,0 +1,1 @@
+module Pages.NotFound.Decode exposing (..)
