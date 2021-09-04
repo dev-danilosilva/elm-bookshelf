@@ -147,11 +147,11 @@ view model =
                             text "Carregando..."
 
                         Success txt ->
-                            text <| Debug.log "Books" txt
+                            text <| txt
                         
                         SuccessfullyDecoded fb ->
                             let
-                                _ = Debug.log "Book" fb
+                                _ = fb
                             in
                                 div []
                                     [ul []
